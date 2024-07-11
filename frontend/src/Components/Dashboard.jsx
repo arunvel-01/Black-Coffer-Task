@@ -28,7 +28,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('apiUrl');
+        const res = await axios.get(apiUrl);
         setData(res.data);
         setFilteredData(res.data);
       } catch (err) {
