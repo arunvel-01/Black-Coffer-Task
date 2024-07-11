@@ -23,10 +23,12 @@ const Dashboard = () => {
     topic: '',
   });
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('https://black-coffer-task.onrender.com/data');
+        const res = await axios.get('apiUrl');
         setData(res.data);
         setFilteredData(res.data);
       } catch (err) {
