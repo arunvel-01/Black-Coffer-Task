@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Container, Grid, Paper } from '@mui/material';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import IntensityGraph from '../Graphs/IntensityGraph'; // Adjust path as per your project structure
-import LikelihoodGraph from '../Graphs/LikelihoodGraph'; // Adjust path as per your project structure
-import RelevanceGraph from '../Graphs/RelevanceGraph'; // Adjust path as per your project structure
-import YearGraph from '../Graphs/YearGraph'; // Adjust path as per your project structure
-import CountryGraph from '../Graphs/CountryGraph'; // Adjust path as per your project structure
-import TopicsGraph from '../Graphs/TopicsGraph'; // Adjust path as per your project structure
-import RegionGraph from '../Graphs/RegionGraph'; // Adjust path as per your project structure
-import TopicsFilter from './TopicsFilter'; // Adjust path as per your project structure
+import IntensityGraph from '../Graphs/IntensityGraph';
+import LikelihoodGraph from '../Graphs/LikelihoodGraph';
+import RelevanceGraph from '../Graphs/RelevanceGraph';
+import YearGraph from '../Graphs/YearGraph';
+import CountryGraph from '../Graphs/CountryGraph';
+import TopicsGraph from '../Graphs/TopicsGraph';
+import RegionGraph from '../Graphs/RegionGraph';
+import TopicsFilter from './TopicsFilter';
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -26,9 +26,9 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/data');
+        const res = await axios.get('https://black-coffer-task.onrender.com/data');
         setData(res.data);
-        setFilteredData(res.data); // Initially set filteredData to all data
+        setFilteredData(res.data);
       } catch (err) {
         console.error('Error fetching data:', err);
       }
