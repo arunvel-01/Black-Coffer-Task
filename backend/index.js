@@ -2,7 +2,6 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from "dotenv";
 import cors from "cors";
-import { job } from './cron.js';
 import morgan from 'morgan';
 
 const app = express();
@@ -43,8 +42,6 @@ app.get("/data", async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
-job.start();
 
 const port = process.env.PORT || 3000;
 
