@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { Container, Grid, Paper } from '@mui/material';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { Container, Grid, Card, CardContent, Typography, FormControl, InputLabel, MenuItem, Select, CircularProgress } from '@mui/material';
 import IntensityGraph from '../Graphs/IntensityGraph';
 import LikelihoodGraph from '../Graphs/LikelihoodGraph';
 import RelevanceGraph from '../Graphs/RelevanceGraph';
@@ -22,16 +21,20 @@ const Dashboard = () => {
     region: '',
     topic: '',
   });
+  const [loading, setLoading] = useState(true);
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await axios.get(apiUrl);
       setData(res.data);
       setFilteredData(res.data);
     } catch (err) {
       console.error('Error fetching data:', err);
+    } finally {
+      setLoading(false);
     }
   }, [apiUrl]);
 
@@ -62,132 +65,141 @@ const Dashboard = () => {
     }));
   };
 
-  // Extract unique values for each filter
   const getUniqueValues = (fieldName) => {
     return [...new Set(data.map((item) => item[fieldName]))];
   };
 
+  if (loading) {
+    return <CircularProgress />;
+  }
+
   return (
     <Container>
-      <h1>Dashboard</h1>
+      <Typography variant="h4" gutterBottom align="center">
+        Dashboard
+      </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
-          <Paper>
-            <FormControl fullWidth>
-              <InputLabel id="likelihood-filter-label">Likelihood</InputLabel>
-              <Select
-                labelId="likelihood-filter-label"
-                id="likelihood-filter-select"
-                value={filters.likelihood}
-                onChange={(e) => handleFilterChange(e, 'likelihood')}
-              >
-                <MenuItem value="">All</MenuItem>
-                {getUniqueValues('likelihood').map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Paper>
+        <Grid item xs={12} md={4}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="h6">Filters</Typography>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="likelihood-filter-label">Likelihood</InputLabel>
+                <Select
+                  labelId="likelihood-filter-label"
+                  id="likelihood-filter-select"
+                  value={filters.likelihood}
+                  onChange={(e) => handleFilterChange(e, 'likelihood')}
+                >
+                  <MenuItem value="">All</MenuItem>
+                  {getUniqueValues('likelihood').map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="relevance-filter-label">Relevance</InputLabel>
+                <Select
+                  labelId="relevance-filter-label"
+                  id="relevance-filter-select"
+                  value={filters.relevance}
+                  onChange={(e) => handleFilterChange(e, 'relevance')}
+                >
+                  <MenuItem value="">All</MenuItem>
+                  {getUniqueValues('relevance').map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="year-filter-label">Year</InputLabel>
+                <Select
+                  labelId="year-filter-label"
+                  id="year-filter-select"
+                  value={filters.start_year}
+                  onChange={(e) => handleFilterChange(e, 'start_year')}
+                >
+                  <MenuItem value="">All</MenuItem>
+                  {getUniqueValues('start_year').map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="country-filter-label">Country</InputLabel>
+                <Select
+                  labelId="country-filter-label"
+                  id="country-filter-select"
+                  value={filters.country}
+                  onChange={(e) => handleFilterChange(e, 'country')}
+                >
+                  <MenuItem value="">All</MenuItem>
+                  {getUniqueValues('country').map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="region-filter-label">Region</InputLabel>
+                <Select
+                  labelId="region-filter-label"
+                  id="region-filter-select"
+                  value={filters.region}
+                  onChange={(e) => handleFilterChange(e, 'region')}
+                >
+                  <MenuItem value="">All</MenuItem>
+                  {getUniqueValues('region').map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TopicsFilter data={data} setFilteredData={(value) => handleFilterChange({ target: { value } }, 'topic')} />
+            </CardContent>
+          </Card>
         </Grid>
-        <Grid item xs={12} md={3}>
-          <Paper>
-            <FormControl fullWidth>
-              <InputLabel id="relevance-filter-label">Relevance</InputLabel>
-              <Select
-                labelId="relevance-filter-label"
-                id="relevance-filter-select"
-                value={filters.relevance}
-                onChange={(e) => handleFilterChange(e, 'relevance')}
-              >
-                <MenuItem value="">All</MenuItem>
-                {getUniqueValues('relevance').map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Paper>
-            <FormControl fullWidth>
-              <InputLabel id="year-filter-label">Year</InputLabel>
-              <Select
-                labelId="year-filter-label"
-                id="year-filter-select"
-                value={filters.start_year}
-                onChange={(e) => handleFilterChange(e, 'start_year')}
-              >
-                <MenuItem value="">All</MenuItem>
-                {getUniqueValues('start_year').map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Paper>
-            <FormControl fullWidth>
-              <InputLabel id="country-filter-label">Country</InputLabel>
-              <Select
-                labelId="country-filter-label"
-                id="country-filter-select"
-                value={filters.country}
-                onChange={(e) => handleFilterChange(e, 'country')}
-              >
-                <MenuItem value="">All</MenuItem>
-                {getUniqueValues('country').map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Paper>
-            <FormControl fullWidth>
-              <InputLabel id="region-filter-label">Region</InputLabel>
-              <Select
-                labelId="region-filter-label"
-                id="region-filter-select"
-                value={filters.region}
-                onChange={(e) => handleFilterChange(e, 'region')}
-              >
-                <MenuItem value="">All</MenuItem>
-                {getUniqueValues('region').map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Paper>
-            <TopicsFilter data={data} setFilteredData={(value) => handleFilterChange({ target: { value } }, 'topic')} />
-          </Paper>
+        <Grid item xs={12} md={8}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Graphs
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                  <IntensityGraph data={filteredData} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <LikelihoodGraph data={filteredData} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <RelevanceGraph data={filteredData} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <YearGraph data={filteredData} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CountryGraph data={filteredData} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TopicsGraph data={filteredData} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <RegionGraph data={filteredData} />
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
-
-      <div className="graphs-container">
-        {/* Graph components */}
-        <IntensityGraph data={filteredData} />
-        <LikelihoodGraph data={filteredData} />
-        <RelevanceGraph data={filteredData} />
-        <YearGraph data={filteredData} />
-        <CountryGraph data={filteredData} />
-        <TopicsGraph data={filteredData} />
-        <RegionGraph data={filteredData} />
-      </div>
     </Container>
   );
 };
