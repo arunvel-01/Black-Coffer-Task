@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { Container, Grid, Paper } from '@mui/material';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
@@ -25,24 +25,21 @@ const Dashboard = () => {
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await axios.get(apiUrl);
+      setData(res.data);
+      setFilteredData(res.data);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    }
+  }, [apiUrl]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(apiUrl);
-        setData(res.data);
-        setFilteredData(res.data);
-      } catch (err) {
-        console.error('Error fetching data:', err);
-      }
-    };
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  useEffect(() => {
-    applyFilters();
-  }, [filters]);
-
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filteredResult = [...data];
     Object.keys(filters).forEach((key) => {
       const value = filters[key];
@@ -51,7 +48,11 @@ const Dashboard = () => {
       }
     });
     setFilteredData(filteredResult);
-  };
+  }, [data, filters]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   const handleFilterChange = (event, field) => {
     const value = event.target.value;
